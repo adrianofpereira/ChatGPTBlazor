@@ -1,0 +1,46 @@
+﻿@page "/"
+@using OpenAI_API.Images
+@using OpenAI_API
+@using DotNetEnv
+
+<PageTitle>Index</PageTitle>
+
+<h1>DALL-E IMAGES </h1>
+
+Digite o prompt:
+<input @bind="@PrompText">
+<button @onclick="GenerateImageAysnc">Gerar</button>
+<img src="@ImageUrl">
+
+@code {
+    private string ApiKey = "";
+
+    private string PrompText = "";
+
+    private string ImageUrl = "";
+
+    protected override void OnInitialized()
+    {
+        DotNetEnv.Env.Load();
+        ApiKey = "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";//DotNetEnv.Env.GetString("OPENAI_API_KEY");
+        
+    }
+
+    private async Task GenerateImageAysnc()
+    {
+        var api = new OpenAI_API.OpenAIAPI("Apikey");
+                
+        var response = await api.ImageGenerations.CreateImageAsync(new ImageGenerationRequest
+            {
+                NumOfImages = 1,
+                Prompt = PrompText,
+                ResponseFormat = ImageResponseFormat.Url,
+                Size = ImageSize._1024
+            });
+
+            ImageUrl = response.Data[0].Url;
+
+                
+
+    }
+}
